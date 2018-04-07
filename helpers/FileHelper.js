@@ -4,11 +4,8 @@ const uuid = require('node-uuid')
 
 const getSubFolder = function (root) {
     const isDirectory = source => lstatSync(source).isDirectory()
-    if (isDirectory) {
-
-    } else {
-
-    }
+    const subFolders = source => readdirSync(source).map(name => join(source, name)).filter(isDirectory)
+    return subFolders()
 }
 
 class FileHelper {

@@ -1,4 +1,6 @@
-const { lstatSync, readdirSync } = require('fs')
+
+
+const { lstatSync, readdirSync, readFileSync } = require('fs')
 const { join } = require('path')
 const uuid = require('node-uuid')
 const TARGETPATTERN = /\.txt$/ig
@@ -52,7 +54,14 @@ class FileHelper {
             const dir = dirItems[dirIdList[i]]
             const files = getFiles(dir)
             if (files && files.length) {
+                files.forEach(file => {
+                    const content = readFileSync(file,'utf-8')
+                    const body = {
+                        path: file,
+                        content: content
+                    }
 
+                })
             }
         }
     }

@@ -1,6 +1,11 @@
-const FileHelper = require('./helpers/FileHelper')
+const co = require('co')
 
-const fileHelper = new FileHelper()
+const GeoTagWorker = require('./workers/GeoTagWorker')
 
-const structure = fileHelper.getFolderStructure('data')
-const isToDB = fileHelper.iterateFolderToUpdateDB(structure)
+const geoTagWorker = new GeoTagWorker()
+
+co(function* () {
+    yield geoTagWorker.SynchronizeDBForTag()
+    yield geoTagWorker.SynchronizeDBForData()
+})
+

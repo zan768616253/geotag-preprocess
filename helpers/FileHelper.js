@@ -1,6 +1,4 @@
-
-
-const { lstatSync, readdirSync, readFileSync } = require('fs')
+const { lstatSync, readdirSync } = require('fs')
 const { join } = require('path')
 const uuid = require('node-uuid')
 const TARGETPATTERN = /\.txt$/ig
@@ -23,12 +21,6 @@ const getSubFolder = function (root) {
     return subFolders(root)
 }
 
-const getFiles = function (root) {
-    const isFIle = source => source.search(TARGETPATTERN) !== -1
-    const files = source => readdirSync(source).map(name => join(source, name)).filter(isFIle)
-    return files(root)
-}
-
 class FileHelper {
 
     constructor (root) {
@@ -46,24 +38,10 @@ class FileHelper {
         }
     }
 
-    iterateFolderToUpdateDB (folderStructure) {
-        const dirIdList = folderStructure.folderIds
-        const dirItems = folderStructure.folderItems
-
-        for (let i = 0; i < dirIdList.length; i++) {
-            const dir = dirItems[dirIdList[i]]
-            const files = getFiles(dir)
-            if (files && files.length) {
-                files.forEach(file => {
-                    const content = readFileSync(file,'utf-8')
-                    const body = {
-                        path: file,
-                        content: content
-                    }
-
-                })
-            }
-        }
+    getFiles (root) {
+        const isFIle = source => source.search(TARGETPATTERN) !== -1
+        const files = source => readdirSync(source).map(name => join(source, name)).filter(isFIle)
+        return files(root)
     }
 
 }

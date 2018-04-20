@@ -3,8 +3,7 @@ const uuid = require('node-uuid')
 
 const config = require('../config')
 
-const GEOTAG_INDEX = 'GeotagIndex'
-const GEOTAG_TYPE = 'GeotagType'
+const GEOTAG_INDEX = 'geotagindex'
 
 class ElasticsearchGeoTag{
 
@@ -13,13 +12,15 @@ class ElasticsearchGeoTag{
             host: config.elasticsearch.host,
             log: config.elasticsearch.log
         })
+        this.GEOTAG_TYPE = 'geotagtype'
+        this.DOC_TYPE = 'doc'
     }
 
-    query (body) {
+    query (type, body) {
         return new Promise((resolve, reject) => {
             this.elasticClient.search({
                 index: GEOTAG_INDEX,
-                type: GEOTAG_TYPE,
+                type: type,
                 body: body
             }, (err, response) => {
                 if (err) {
@@ -31,29 +32,29 @@ class ElasticsearchGeoTag{
         })
     }
 
-    insert (body) {
+    insert (type, body) {
         return new Promise((resolve, reject) => {
             this.elasticClient.index({
                 index: GEOTAG_INDEX,
-                type: GEOTAG_TYPE,
+                type: type,
                 id: uuid.v4(),
                 body: body
             }, (err, response) => {
                 if (err) {
                     reject(err.message)
                 } else {
-                    console(response)
+                    console.log(response)
                     resolve(true)
                 }
             })
         })
     }
 
-    delete(id) {
+    delete(type, id) {
         return new Promise((resolve, reject) => {
             this.elasticClient.delete({
                 index: GEOTAG_INDEX,
-                type: GEOTAG_TYPE,
+                type: type,
                 id: id
             }, (err, response) => {
                 if (err) {

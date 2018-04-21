@@ -1,5 +1,6 @@
 const { readFileSync } = require('fs')
 const co = require('co')
+const md5 = require('md5')
 
 const FileHelper = require('../helpers/FileHelper')
 const ElasticsearchHelper = require('../helpers/ElasticsearchHelper')
@@ -33,7 +34,7 @@ class GeoTagWorker {
                                 content: content
                             }
 
-                            const result = yield elasticsearchHelper.insertDataToES(body)
+                            const result = yield elasticsearchHelper.insertDataToDOC(md5(file), body)
                             console.log(result)
                         }
 

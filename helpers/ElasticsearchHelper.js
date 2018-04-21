@@ -1,4 +1,4 @@
-const co = require('co')
+const md5 = require('md5')
 const fs = require('fs')
 const readline = require('readline')
 const stream = require('stream')
@@ -12,10 +12,10 @@ class ElasticsearchHelper {
         this.elasticsearchGeoTag = new ElasticsearchGeoTag()
     }
 
-    insertDataToES (body) {
+    insertDataToDOC (id, body) {
         const self = this
         return new Promise((resolve, reject) => {
-            self.elasticsearchGeoTag.insert(self.elasticsearchGeoTag.DOC_TYPE, body)
+            self.elasticsearchGeoTag.insert(self.elasticsearchGeoTag.DOC_INDEX, id, body)
                 .then(r => {
                     resolve(r)
                 }, e => {
@@ -32,10 +32,15 @@ class ElasticsearchHelper {
             const rl = readline.createInterface(inStream, outStream)
 
             rl.on('line', line => {
-                self.elasticsearchGeoTag.insert(self.elasticsearchGeoTag.GEOTAG_TYPE, { tag: line })
+                rl.pause();
+                self.elasticsearchGeoTag.insert(self.elasticsearchGeoTag.GEOTAG_INDEX, md5(line), { tag: line }).then(() => {
+                    console.log('done ' + line)
+                    rl.resume();
+                })
             })
 
             rl.on('close', () => {
+                console.log('close')
                 resolve(true)
             })
 

@@ -12,6 +12,7 @@
   "dependencies": {
     "co": "^4.6.0",
     "elasticsearch": "^14.2.2",
+    "md5": "^2.2.1",
     "node-uuid": "^1.4.8"
   }
 }

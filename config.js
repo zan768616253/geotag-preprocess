@@ -4,7 +4,7 @@ const config = {
         log: 'info'
     },
     DEFAULT_DATA_FOLDER: 'data/source',
-    DEFAULT_TAGS_FOLDER: 'data/geotag/tags.txt'
+    DEFAULT_TAGS_File: 'data/geotag/tags.txt'
 }
 
 module.exports = config

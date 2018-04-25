@@ -52,7 +52,12 @@ class GeoTagWorker {
                 resolve(r)
             })
         })
+    }
 
+    ExtractGeotags () {
+        return new Promise((resolve, reject) => {
+
+        })
     }
 }
 

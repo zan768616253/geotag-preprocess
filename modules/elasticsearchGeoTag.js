@@ -1,5 +1,4 @@
 const elasticsearch = require('elasticsearch')
-const uuid = require('node-uuid')
 
 const config = require('../config')
 
@@ -65,7 +64,21 @@ class ElasticsearchGeoTag{
         })
     }
 
-    update () {
+    update(index, body) {
+        return new Promise((resolve, reject) => {
+            this.elasticClient.updateByQuery({
+                index: index,
+                type: '_doc',
+                body: body
+            }, (err, response) => {
+                if (err) {
+                    reject(err.message)
+                } else {
+                    console(response)
+                    resolve(true)
+                }
+            })
+        })
     }
 }
 

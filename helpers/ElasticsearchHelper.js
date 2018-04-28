@@ -48,24 +48,39 @@ class ElasticsearchHelper {
     }
 
     getDocIdByQueryTag () {
+        const self = this
+        return new Promise((resolve, reject) => {
+            const body = {
+                query: {
+                    "match_all": {}
+                }
+            }
 
+            self.elasticsearchGeoTag.scrollQuery(self.elasticsearchGeoTag.GEOTAG_INDEX, body, self.updateDocumentWithTag.bind(self))
+                .then(r => {
+                    resolve(r)
+                }, e => {
+                    reject(e)
+                })
+        })
     }
 
-    updateDocumentWithTag (tag) {
+    updateDocumentWithTag (doc) {
+        const self = this
         return new Promise((resolve, reject) => {
             const query = {
                 "match_phrase": {
-                    "content": tag
+                    "content": doc._source.tag
                 }
             }
             const body = {
                 "query": query,
                 "script": {
-                    "inline": "ctx._source.tags.add(params.hits)",
-                    "params": {"hits": tag}
+                    "inline": "if (ctx._source.tags != null) {if (!ctx._source.tags.contains(params.hits)) {ctx._source.tags.add(params.hits)}} else {ctx._source.tags = [params.hits]}",
+                    "params": {"hits": doc._source.tag}
                 }
             }
-            this.elasticsearchGeoTag.update(self.elasticsearchGeoTag.DOC_INDEX, body)
+            self.elasticsearchGeoTag.update(self.elasticsearchGeoTag.DOC_INDEX, body)
                 .then(r => {
                     resolve(r)
                 }, e => {

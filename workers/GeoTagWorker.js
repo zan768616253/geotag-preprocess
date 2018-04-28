@@ -56,7 +56,9 @@ class GeoTagWorker {
 
     ExtractGeotags () {
         return new Promise((resolve, reject) => {
-
+            elasticsearchHelper.getDocIdByQueryTag().then(r => {
+                resolve(r)
+            })
         })
     }
 }

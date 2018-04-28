@@ -1,3 +1,4 @@
+const co = require('co')
 const elasticsearch = require('elasticsearch')
 
 const config = require('../config')
@@ -25,6 +26,37 @@ class ElasticsearchGeoTag{
                 } else {
                     resolve(response.hits.hits)
                 }
+            })
+        })
+    }
+
+    scrollQuery (index, body, callback) {
+        const self = this
+        return new Promise((resolve, reject) => {
+            self.elasticClient.search({
+                index: index,
+                type: '_doc',
+                scroll: '1m',
+                body: body
+
+            }, function getMoreUntilDone(error, response) {
+                co (function* () {
+                    let count = 0
+                    for (let i = 0; i < response.hits.hits.length; i++) {
+                        yield callback(response.hits.hits[i])
+                        count ++
+                    }
+
+                    if (response.hits.total > count) {
+                        self.scroll({
+                            scrollId: response._scroll_id,
+                            scroll: '1m'
+                        }, getMoreUntilDone)
+                    } else {
+                        resolve(true)
+                    }
+                })
+
             })
         })
     }
@@ -74,7 +106,7 @@ class ElasticsearchGeoTag{
                 if (err) {
                     reject(err.message)
                 } else {
-                    console(response)
+                    console.log(response)
                     resolve(true)
                 }
             })
